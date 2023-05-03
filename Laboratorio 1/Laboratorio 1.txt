@@ -1,0 +1,135 @@
+Laboratório 1 (.NET)
+
+labs
+https://us-east-1.student.classrooms.aws.training/class/rUUw3PQK5VHrJwGAHDQqbs
+
+observação
+Usar o PowerShell
+
+1. Revise o ambiente de desenvolvimento
+
+------------------------------------------------------------------------------------
+Verifique a instalação da AWS CLI
+------------------------------------------------------------------------------------
+aws --version
+aws-cli/2.11.17 Python/3.11.3 Windows/10 exec-env/EC2 exe/AMD64 prompt/off
+
+------------------------------------------------------------------------------------
+Lista completa de perfis pré-configurados
+------------------------------------------------------------------------------------
+aws configure list-profiles
+default
+testuser
+developer
+developer-user
+
+------------------------------------------------------------------------------------
+Determine qual role o perfil developer está vinculado
+AWS STS -> Security Token Service
+------------------------------------------------------------------------------------
+aws sts get-caller-identity --profile developer
+Account: '007792546604'
+Arn: arn:aws:sts::007792546604:assumed-role/notes-application-role/botocore-session-1683157501
+UserId: AROAQDUDY2MWMUFFNUKAG:botocore-session-1683157501
+
+------------------------------------------------------------------------------------
+
+2. Revise as Opções de Extensão do AWS Toolkit
+
+------------------------------------------------------------------------------------
+Ferramenta no Visual Studio
+------------------------------------------------------------------------------------
+Exibir > Explorador da AWS
+Profile: developer
+Region: Oregon
+
+------------------------------------------------------------------------------------
+
+3. Verifique as Permissões do IAM
+
+------------------------------------------------------------------------------------
+Visualize os Buckets do Amazon S3
+------------------------------------------------------------------------------------
+aws s3 ls --profile developer
+2023-03-03 20:09:26 awslabs-resources-krxqqla59sui8d-us-east-1-007792546604
+2023-05-03 23:13:45 labstack-ce6a3b14-ab3a-4c32-89-lab1deletemebucket-yxep3mmgto6m
+2023-05-03 23:13:45 labstack-ce6a3b14-ab3a-4c32-8966-2800c-lab1bucket-8zz46vt9cyfl
+
+------------------------------------------------------------------------------------
+Excluir um Buckets do Amazon S3
+------------------------------------------------------------------------------------
+$bucketToDelete=(aws s3api list-buckets --output text --query 'Buckets[?contains(Name, `deletemebucket`) == `true`] | [0].Name' --profile developer)
+echo $bucketToDelete
+labstack-ce6a3b14-ab3a-4c32-89-lab1deletemebucket-yxep3mmgto6m
+
+aws s3 rb s3://$bucketToDelete --profile developer
+remove_bucket failed: s3://labstack-ce6a3b14-ab3a-4c32-89-lab1deletemebucket-yxep3mmgto6m An error occurred (AccessDenied) when calling the DeleteBucket operation: Access Denied
+
+------------------------------------------------------------------------------------
+Depurar o comando Delete Bucket do Amazon S3
+------------------------------------------------------------------------------------
+aws s3 rb s3://$bucketToDelete --profile developer --debug
+
+saida resumida
+Inicio da depuracao que divide a solicitacao em partes individuais
+Define a variavel de configuracao e ignora a variavel de ambiente desde que um perfil foi especificado
+Inicia o processo de autenticacao olhando os metadados da instancia
+Prepara a solicitacao do Amazon S3 após verificar a assinatura usando v4 auth
+Conecta ao endpoint do Amazon S3 e encontra um erro 403 de Access Denied
+
+observação
+notes-application-role não tem a permissão s3:DeleteBucket delegada a ele
+
+------------------------------------------------------------------------------------
+
+4. Adicione as permissões ausentes à função developer
+
+------------------------------------------------------------------------------------
+Revisar uma politica de IAM
+------------------------------------------------------------------------------------
+$policyArn=(aws iam list-policies --output text --query 'Policies[?PolicyName == `S3-Delete-Bucket-Policy`].Arn' --profile developer)
+echo $policyArn
+arn:aws:iam::007792546604:policy/S3-Delete-Bucket-Policy
+
+aws iam get-policy-version --policy-arn $policyArn --version-id v1 --profile developer
+PolicyVersion:
+  CreateDate: '2023-05-03T23:14:07+00:00'
+  Document:
+    Statement:
+    - Action:
+      - s3:DeleteBucket
+      Effect: Allow
+      Resource: arn:aws:s3:::labstack-ce6a3b14-ab3a-4c32-89-lab1deletemebucket-yxep3mmgto6m
+    Version: '2012-10-17'
+  IsDefaultVersion: true
+  VersionId: v1
+
+------------------------------------------------------------------------------------
+Anexe a politica IAM a role notes-application
+------------------------------------------------------------------------------------
+aws iam attach-role-policy --policy-arn $policyArn --role-name notes-application-role --profile developer
+
+------------------------------------------------------------------------------------
+Revise as politicas anexadas a role
+------------------------------------------------------------------------------------
+aws iam list-attached-role-policies --role-name notes-application-role --profile developer
+AttachedPolicies:
+- PolicyArn: arn:aws:iam::007792546604:policy/LabStack-ce6a3b14-ab3a-4c32-8966-2800ce93ba09-vEsZ9BR72BJwHWW2sDTnSs-1-DeveloperLabPolicy-80AOC63AHY2K
+  PolicyName: LabStack-ce6a3b14-ab3a-4c32-8966-2800ce93ba09-vEsZ9BR72BJwHWW2sDTnSs-1-DeveloperLabPolicy-80AOC63AHY2K
+- PolicyArn: arn:aws:iam::007792546604:policy/S3-Delete-Bucket-Policy
+  PolicyName: S3-Delete-Bucket-Policy
+- PolicyArn: arn:aws:iam::aws:policy/ReadOnlyAccess
+  PolicyName: ReadOnlyAccess
+
+------------------------------------------------------------------------------------
+Excluir um Buckets do Amazon S3
+------------------------------------------------------------------------------------
+aws s3 rb s3://$bucketToDelete --profile developer
+remove_bucket: labstack-ce6a3b14-ab3a-4c32-89-lab1deletemebucket-yxep3mmgto6m
+
+------------------------------------------------------------------------------------
+Visualize os Buckets do Amazon S3
+------------------------------------------------------------------------------------
+aws s3 ls --profile developer
+2023-03-03 20:09:26 awslabs-resources-krxqqla59sui8d-us-east-1-007792546604
+2023-05-03 23:13:45 labstack-ce6a3b14-ab3a-4c32-8966-2800c-lab1bucket-8zz46vt9cyfl
