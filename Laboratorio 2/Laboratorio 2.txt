@@ -1,0 +1,57 @@
+Laboratório 2 (.NET)
+
+labs
+https://us-east-1.student.classrooms.aws.training/class/rUUw3PQK5VHrJwGAHDQqbs
+
+observação
+Usar o PowerShell
+
+------------------------------------------------------------------------------------
+
+4. Configurar hospedagem de site estático em um bucket do Amazon S3 com a AWS CLI
+
+------------------------------------------------------------------------------------
+Use o serviço s3api para criar uma variavel com o nome do bucket
+------------------------------------------------------------------------------------
+$mybucket=$(aws s3api list-buckets --output text --query 'Buckets[?contains(Name, `notes-bucket`) == `true`].Name')
+echo $mybucket
+notes-bucket-otaviokoike-800060891
+
+------------------------------------------------------------------------------------
+Atualizar as permissões de bloqueio de acesso publico
+------------------------------------------------------------------------------------
+aws s3api put-public-access-block --bucket $mybucket --public-access-block-configuration "BlockPublicPolicy=false,RestrictPublicBuckets=false"
+
+------------------------------------------------------------------------------------
+Sincronizar os arquivos da pasta html com o bucket
+------------------------------------------------------------------------------------
+aws s3 sync C:/code/html/. s3://$mybucket/
+upload: ..\..\..\..\code\html\404.png to s3://notes-bucket-otaviokoike-800060891/404.png
+upload: ..\..\..\..\code\html\error.html to s3://notes-bucket-otaviokoike-800060891/error.html
+upload: ..\..\..\..\code\html\index.html to s3://notes-bucket-otaviokoike-800060891/index.html
+upload: ..\..\..\..\code\html\styles.css to s3://notes-bucket-otaviokoike-800060891/styles.css
+upload: ..\..\..\..\code\html\header.png to s3://notes-bucket-otaviokoike-800060891/header.png
+
+------------------------------------------------------------------------------------
+Habilitar Hospedagem do site Amazon S3
+------------------------------------------------------------------------------------
+aws s3api put-bucket-website --bucket $mybucket --website-configuration file://C:/code/website.json
+
+------------------------------------------------------------------------------------
+Definir MyRegion com a regiao do Laboratorio
+------------------------------------------------------------------------------------
+$myRegion = Invoke-RestMethod -uri http://169.254.169.254/latest/meta-data/placement/region
+echo $myRegion
+us-west-2
+
+------------------------------------------------------------------------------------
+Aplicar politica de bucket
+------------------------------------------------------------------------------------
+aws s3api put-bucket-policy --bucket $mybucket --policy file://C:/code/policy.json
+
+------------------------------------------------------------------------------------
+Determinar url do site baseado na regiao
+------------------------------------------------------------------------------------
+"`nYou can now access the website at:`nhttp://$mybucket.s3-website-$myRegion.amazonaws.com`n`n"
+You can now access the website at:
+http://notes-bucket-otaviokoike-800060891.s3-website-us-west-2.amazonaws.com
