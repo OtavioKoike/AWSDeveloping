@@ -1,0 +1,17 @@
+
+{
+    "region" : "",
+    "profile" : "default",
+    "configuration" : "Release",
+    "framework"     : "netcoreapp3.1",
+    "function-name" : "search-function",
+    "package-type"  : "Zip",
+    "function-handler" : "PollyNotesAPI-Search::PollyNotesAPISearch.Function::FunctionHandler",
+    "function-memory-size" : 512,
+    "function-role"        : "",
+    "function-timeout"     : 15,
+    "function-runtime"     : "dotnetcore3.1",
+    "tracing-mode"         : "PassThrough",
+    "environment-variables" : "\"TABLE_NAME\"=\"Notes\"",
+    "image-tag"             : ""
+}

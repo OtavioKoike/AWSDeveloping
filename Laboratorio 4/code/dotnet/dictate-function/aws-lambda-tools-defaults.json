@@ -1,0 +1,18 @@
+
+{
+    "region" : "ap-southeast-1",
+    "profile" : "default",
+    "configuration" : "Release",
+    "framework"     : "netcoreapp3.1",
+    "function-name" : "dictate-function",
+    "package-type"  : "Zip",
+    "function-handler" : "PollyNotesAPI-Dictate::PollyNotesAPIDictate.Function::FunctionHandler",
+    "function-memory-size" : 512,
+    "function-role"        : "arn:aws:iam::070813755899:role/lambdaPollyRole",
+    "function-timeout"     : 15,
+    "function-runtime"     : "dotnetcore3.1",
+    "tracing-mode"         : "PassThrough",
+    "environment-variables" : "\"TABLE_NAME\"=\"Notes\";\"MP3_BUCKET_NAME\"=\"labstack-ce6a3b14-ab3a-4c32-8-pollynotesapibucket-yflw1f6hw1ed\"",
+    "image-tag"             : "",
+    "function-description"  : ""
+}
