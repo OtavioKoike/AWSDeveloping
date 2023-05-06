@@ -1,0 +1,193 @@
+Laboratório 5 (.NET)
+
+labs
+https://us-east-1.student.classrooms.aws.training/class/rUUw3PQK5VHrJwGAHDQqbs
+
+observação
+Usar o PowerShell
+
+------------------------------------------------------------------------------------
+
+1. Crie o Amazon API Gateway e o Recurso
+
+------------------------------------------------------------------------------------
+Console AWS
+------------------------------------------------------------------------------------
+API Gateway > Escolha o tipo de API > REST API > Compilar
+
+REST > New API
+API Name: PollyNotesAPI
+
+Action > Create Resource > Criar Recurso
+Nome do Recurso: notes
+
+------------------------------------------------------------------------------------
+
+2. Configure o Método GET e Adicione um modelo de Mapeamento
+
+------------------------------------------------------------------------------------
+Configure o Método GET
+------------------------------------------------------------------------------------
+Selecione /notes > Actions > Criar Método
+Selecione GET > Check > Save
+Lambda Function: list-function
+Test
+
+Response Body:
+[{"Note": "hello world", "UserId": "testuser", "NoteId": 1}, {"Note": "this is my first note", "UserId": "testuser", "NoteId": 2}, {"Note": "PartiQL is a SQL compatible language for DynamoDB", "UserId": "student2", "NoteId": 3}, {"Note": "I love DyDB", "UserId": "student2", "NoteId": 4}, {"Note": "Maximum size of an item is ____ KB ?", "UserId": "student2", "NoteId": 5}, {"Note": "DynamoDB is NoSQL", "UserId": "student", "NoteId": 1}, {"Note": "A DynamoDB table is schemaless", "UserId": "student", "NoteId": 2}, {"Note": "Free swag code: 1234", "UserId": "newbie", "NoteId": 1}, {"Note": "I love DynamoDB", "UserId": "newbie", "NoteId": 2}]
+
+------------------------------------------------------------------------------------
+Atualizar o Metodo GET para passar uma variavel
+------------------------------------------------------------------------------------
+Integration Request > Mapping Templates > Check "When there are no templates defined (recommended)"
+Add mapping template > application/json > Check
+No bloco de Código: {"UserId":"student"}
+Salvar
+Test
+
+Response Body:
+[{"Note": "DynamoDB is NoSQL", "UserId": "student", "NoteId": 1}, {"Note": "A DynamoDB table is schemaless", "UserId": "student", "NoteId": 2}]
+
+Solução
+Ele só trouxe os casos com UserId igual a "student"
+
+------------------------------------------------------------------------------------
+Limite os Dados de Resposta
+------------------------------------------------------------------------------------
+Integration Response > Expandir response status 200 > Mapping Templates
+Add mapping template > application/json > Check
+
+No bloco de Código:
+#set($inputRoot = $input.path('$'))
+[
+    #foreach($elem in $inputRoot)
+    {
+    "NoteId" : "$elem.NoteId",
+    "Note" : "$elem.Note"
+    } 
+    #if($foreach.hasNext),#end
+    #end
+]
+
+Salvar
+Test
+
+Response Body:
+[
+        {
+    "NoteId" : "1",
+    "Note" : "DynamoDB is NoSQL"
+    } 
+    ,        {
+    "NoteId" : "2",
+    "Note" : "A DynamoDB table is schemaless"
+    } 
+        ]
+
+------------------------------------------------------------------------------------
+
+3. Configure o Método POST e Adicione um modelo de Validação
+
+------------------------------------------------------------------------------------
+Configure o Método POST
+------------------------------------------------------------------------------------
+Selecione /notes > Actions > Criar Método
+Selecione POST > Check > Save
+Lambda Function: createUpdate-function
+Test
+
+Request Body:
+{
+    "Note": "This is your new note added using the POST method",
+    "NoteId": 3,
+    "UserId": "student"
+}
+
+Response Body:
+3
+
+------------------------------------------------------------------------------------
+Aplicar um Schema para o Request Body
+------------------------------------------------------------------------------------
+APIs > PollyNotesAPI > Models > Criar > Create Model
+Nome Modelo: NoteModel
+Tipo Modelo: application/json
+Modelo de Schema:
+{
+    "title": "Note",
+    "type": "object",
+    "properties": {
+        "UserId": {"type": "string"},
+        "NoteId": {"type": "integer"},
+        "Note": {"type": "string"}
+    },
+    "required": ["UserId", "NoteId", "Note"]
+}
+
+
+APIs > PollyNotesAPI > Resources > /notes > POST
+Method Request > Request Validator > Edit > Validate Body > Check
+Expandir Request Body > Add Model > application/json > Selecione NoteModel > Check
+
+Test Falha:
+Request Body:
+{
+    "Note": "This is your updated note using the Model validation",
+    "UserId": "student",
+    "id": 3
+}
+
+Response Body:
+{"message": "Invalid request body"}
+
+Test Sucesso:
+Request Body:
+{
+    "Note": "This is your updated note using the Model validation",
+    "UserId": "student",
+    "NoteId": 3
+}
+
+Response Body:
+3
+
+------------------------------------------------------------------------------------
+
+4. Implante a API com Configurações CORS
+
+------------------------------------------------------------------------------------
+Cross-Origin Resource Sharing (CORS) é um mecanismo baseado em cabeçalho HTTP que permite 
+que um servidor indique qualquer outra origem (domínio, esquema ou porta) além da sua própria, 
+a partir da qual um navegador deve permitir o carregamento de recursos.
+------------------------------------------------------------------------------------
+Configure o Compartilhamento de Solicitação entre Origens (CORS)
+------------------------------------------------------------------------------------
+Selecione /notes > Actions > Ativar CORS
+Select Default 4XX e Default 5XX (Permite visualizar os erros do navegador)
+Ativar CORS
+
+------------------------------------------------------------------------------------
+Implante a API
+------------------------------------------------------------------------------------
+Selecione /notes > Actions > Deploy API
+Selecione [New Stage] > Nome: Prod > Deploy
+
+Copie a Invoke Url
+https://q2k61zigh1.execute-api.us-west-2.amazonaws.com/Prod
+Anexe /notes
+
+Response:
+[
+  {
+    "NoteId": "1",
+    "Note": "DynamoDB is NoSQL"
+  },
+  {
+    "NoteId": "2",
+    "Note": "A DynamoDB table is schemaless"
+  },
+  {
+    "NoteId": "3",
+    "Note": "This is your updated note using the Model validation"
+  }
+]
