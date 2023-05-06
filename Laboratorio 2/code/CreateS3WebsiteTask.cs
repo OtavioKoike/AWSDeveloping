@@ -33,6 +33,8 @@ namespace S3Operations
 
                 Console.WriteLine("\nYou can access the website at:");
                 Console.WriteLine($"http://{configSettings.BucketName}.s3-website-{s3Client.Config.RegionEndpoint.SystemName}.amazonaws.com");
+                
+                // Resultado no final do Arquivo*
             }
             catch (Exception e)
             {
@@ -126,3 +128,25 @@ namespace S3Operations
         }
     }
 }
+
+// Start of create website task
+
+// Reading configuration for bucket name...
+
+// Uploading files for the website...
+// Upload: html/404.png to s3://notes-bucket-otaviokoike-800060891/404.png
+// Upload: html/header.png to s3://notes-bucket-otaviokoike-800060891/header.png
+// Upload: html/error.html to s3://notes-bucket-otaviokoike-800060891/error.html
+// Upload: html/index.html to s3://notes-bucket-otaviokoike-800060891/index.html
+// Upload: html/styles.css to s3://notes-bucket-otaviokoike-800060891/styles.css
+
+// Enabling web hosting on the bucket...
+
+// Adding a bucket policy to allow traffic from the internet...
+
+// You can access the website at:
+// http://notes-bucket-otaviokoike-800060891.s3-website-us-west-2.amazonaws.com
+
+// End of create website task
+
+// Press any key to exit...

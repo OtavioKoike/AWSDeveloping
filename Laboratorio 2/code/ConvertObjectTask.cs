@@ -42,6 +42,8 @@ namespace S3Operations
                                    {
                                        { configSettings.MetadataKey, configSettings.MetadataValue }
                                    });
+                
+                // Resultado no final do Arquivo*
             }
             catch (Exception e)
             {
@@ -134,3 +136,18 @@ namespace S3Operations
         }
     }
 }
+
+// Start of convert object task
+
+// Reading configuration for bucket name...
+
+// Getting the CSV object from Amazon S3 bucket
+
+// Converting CSV string to JSON...
+
+// Creating the new JSON object in Amazon S3...
+// Successfully created object
+
+// End of convert object task
+
+// Press any key to exit...

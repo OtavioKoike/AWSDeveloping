@@ -28,6 +28,8 @@ namespace S3Operations
                                    {
                                        { configSettings.MetadataKey, configSettings.MetadataValue }
                                    });
+                
+                // Resultado no final do Arquivo*
             }
             catch (Exception e)
             {
@@ -68,3 +70,13 @@ namespace S3Operations
         }
     }
 }
+
+// Start of create object task
+
+// Reading configuration for bucket name...
+// Creating object...
+// Finished creating object
+
+// End of create object task
+
+// Press any key to exit...

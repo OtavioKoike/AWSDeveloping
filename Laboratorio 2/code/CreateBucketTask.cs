@@ -35,6 +35,8 @@ namespace S3Operations
                 // Pause until the the bucket is in the account
                 Console.WriteLine("\nConfirm that the bucket exists...");
                 await VerifyBucket (s3Client, configSettings.BucketName);
+                
+                // Resultado no final do Arquivo*
             }
             catch (Exception e)
             {
@@ -110,3 +112,19 @@ namespace S3Operations
         }
     }
 }
+
+// Start of create bucket task
+
+// Reading configuration for bucket name...
+// Verifying that the bucket name is valid...
+// The bucket does not exist.
+
+// Creating notes-bucket-otaviokoike-800060891 in US West (Oregon) (us-west-2)
+// Success!
+
+// Confirm that the bucket exists...
+// The bucket: notes-bucket-otaviokoike-800060891 is now available.
+
+// End of create bucket task
+
+// Press any key to exit...
