@@ -28,6 +28,8 @@ namespace DynamoDBOperations
 
                 Console.WriteLine("\nRemediating the marked note...\n");
                 await UpdateExistingAttributeConditionally(ddbClient, tableName, userId, noteId, notePrefix);
+                
+                // Resultado no final do Arquivo*
             }
             catch (Exception e)
             {

@@ -86,6 +86,8 @@ namespace DynamoDBOperations
                 await UpdateNote(ddbContext, note);
 
                 Console.WriteLine("\nData query and update using high-level object persistence model completed successfully.");
+                
+                // Resultado no final do Arquivo*
             }
             catch (Exception e)
             {
