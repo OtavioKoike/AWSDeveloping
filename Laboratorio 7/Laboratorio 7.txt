@@ -1,0 +1,257 @@
+Laboratório 7 (.NET)
+
+labs
+https://us-east-1.student.classrooms.aws.training/class/rUUw3PQK5VHrJwGAHDQqbs
+
+observação
+Usar o PowerShell
+
+------------------------------------------------------------------------------------
+
+3. Implante seu aplicativo usando AWS SAM
+
+------------------------------------------------------------------------------------
+Crie e Implante o Aplicativo
+------------------------------------------------------------------------------------
+Console AWS > Cloud9 > Abrir IDE do Lab 7
+No terminal do Cloud9:
+
+cd ~/environment/api/
+
+bash install_dotnet.sh
+Loaded plugins: extras_suggestions, langpacks, priorities, update-motd
+amzn2-core                                                                                                                  | 3.7 kB  00:00:00     
+244 packages excluded due to repository priority protections
+Resolving Dependencies
+--> Running transaction check
+---> Package ca-certificates.noarch 0:2021.2.50-72.amzn2.0.5 will be updated
+---> Package ca-certificates.noarch 0:2021.2.50-72.amzn2.0.7 will be an update
+---> Package net-tools.x86_64 0:2.0-0.22.20131004git.amzn2.0.2 will be updated
+---> Package net-tools.x86_64 0:2.0-0.22.20131004git.amzn2.0.3 will be an update
+---> Package python2-rpm.x86_64 0:4.11.3-48.amzn2.0.2 will be updated
+---> Package python2-rpm.x86_64 0:4.11.3-48.amzn2.0.3 will be an update
+---> Package rpm.x86_64 0:4.11.3-48.amzn2.0.2 will be updated
+---> Package rpm.x86_64 0:4.11.3-48.amzn2.0.3 will be an update
+---> Package rpm-build.x86_64 0:4.11.3-48.amzn2.0.2 will be updated
+---> Package rpm-build.x86_64 0:4.11.3-48.amzn2.0.3 will be an update
+---> Package rpm-build-libs.x86_64 0:4.11.3-48.amzn2.0.2 will be updated
+---> Package rpm-build-libs.x86_64 0:4.11.3-48.amzn2.0.3 will be an update
+---> Package rpm-libs.x86_64 0:4.11.3-48.amzn2.0.2 will be updated
+---> Package rpm-libs.x86_64 0:4.11.3-48.amzn2.0.3 will be an update
+---> Package rpm-plugin-systemd-inhibit.x86_64 0:4.11.3-48.amzn2.0.2 will be updated
+---> Package rpm-plugin-systemd-inhibit.x86_64 0:4.11.3-48.amzn2.0.3 will be an update
+---> Package rpm-sign.x86_64 0:4.11.3-48.amzn2.0.2 will be updated
+---> Package rpm-sign.x86_64 0:4.11.3-48.amzn2.0.3 will be an update
+---> Package vim-common.x86_64 2:9.0.1403-1.amzn2.0.1 will be updated
+---> Package vim-common.x86_64 2:9.0.1403-1.amzn2.0.2 will be an update
+---> Package vim-data.noarch 2:9.0.1403-1.amzn2.0.1 will be updated
+---> Package vim-data.noarch 2:9.0.1403-1.amzn2.0.2 will be an update
+---> Package vim-enhanced.x86_64 2:9.0.1403-1.amzn2.0.1 will be updated
+---> Package vim-enhanced.x86_64 2:9.0.1403-1.amzn2.0.2 will be an update
+---> Package vim-filesystem.noarch 2:9.0.1403-1.amzn2.0.1 will be updated
+---> Package vim-filesystem.noarch 2:9.0.1403-1.amzn2.0.2 will be an update
+---> Package vim-minimal.x86_64 2:9.0.1403-1.amzn2.0.1 will be updated
+---> Package vim-minimal.x86_64 2:9.0.1403-1.amzn2.0.2 will be an update
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+===================================================================================================================================================
+ Package                                    Arch                   Version                                        Repository                  Size
+===================================================================================================================================================
+Updating:
+ ca-certificates                            noarch                 2021.2.50-72.amzn2.0.7                         amzn2-core                 370 k
+ net-tools                                  x86_64                 2.0-0.22.20131004git.amzn2.0.3                 amzn2-core                 304 k
+ python2-rpm                                x86_64                 4.11.3-48.amzn2.0.3                            amzn2-core                  85 k
+ rpm                                        x86_64                 4.11.3-48.amzn2.0.3                            amzn2-core                 1.2 M
+ rpm-build                                  x86_64                 4.11.3-48.amzn2.0.3                            amzn2-core                 150 k
+ rpm-build-libs                             x86_64                 4.11.3-48.amzn2.0.3                            amzn2-core                 107 k
+ rpm-libs                                   x86_64                 4.11.3-48.amzn2.0.3                            amzn2-core                 277 k
+ rpm-plugin-systemd-inhibit                 x86_64                 4.11.3-48.amzn2.0.3                            amzn2-core                  48 k
+ rpm-sign                                   x86_64                 4.11.3-48.amzn2.0.3                            amzn2-core                  50 k
+ vim-common                                 x86_64                 2:9.0.1403-1.amzn2.0.2                         amzn2-core                 7.9 M
+ vim-data                                   noarch                 2:9.0.1403-1.amzn2.0.2                         amzn2-core                  79 k
+ vim-enhanced                               x86_64                 2:9.0.1403-1.amzn2.0.2                         amzn2-core                 1.6 M
+ vim-filesystem                             noarch                 2:9.0.1403-1.amzn2.0.2                         amzn2-core                  74 k
+ vim-minimal                                x86_64                 2:9.0.1403-1.amzn2.0.2                         amzn2-core                 742 k
+
+Transaction Summary
+(1/14): ca-certificates-2021.2.50-72.amzn2.0.7.noarch.rpm                                                                   | 370 kB  00:00:00     
+(2/14): net-tools-2.0-0.22.20131004git.amzn2.0.3.x86_64.rpm                                                                 | 304 kB  00:00:00     
+(3/14): python2-rpm-4.11.3-48.amzn2.0.3.x86_64.rpm                                                                          |  85 kB  00:00:00     
+(4/14): rpm-4.11.3-48.amzn2.0.3.x86_64.rpm                                                                                  | 1.2 MB  00:00:00     
+(5/14): rpm-build-4.11.3-48.amzn2.0.3.x86_64.rpm                                                                            | 150 kB  00:00:00     
+(6/14): rpm-build-libs-4.11.3-48.amzn2.0.3.x86_64.rpm                                                                       | 107 kB  00:00:00     
+(7/14): rpm-libs-4.11.3-48.amzn2.0.3.x86_64.rpm                                                                             | 277 kB  00:00:00     
+(8/14): rpm-plugin-systemd-inhibit-4.11.3-48.amzn2.0.3.x86_64.rpm                                                           |  48 kB  00:00:00     
+(9/14): rpm-sign-4.11.3-48.amzn2.0.3.x86_64.rpm                                                                             |  50 kB  00:00:00     
+(10/14): vim-data-9.0.1403-1.amzn2.0.2.noarch.rpm                                                                           |  79 kB  00:00:00     
+(11/14): vim-enhanced-9.0.1403-1.amzn2.0.2.x86_64.rpm                                                                       | 1.6 MB  00:00:00     
+(12/14): vim-filesystem-9.0.1403-1.amzn2.0.2.noarch.rpm                                                                     |  74 kB  00:00:00     
+(13/14): vim-minimal-9.0.1403-1.amzn2.0.2.x86_64.rpm                                                                        | 742 kB  00:00:00     
+(14/14): vim-common-9.0.1403-1.amzn2.0.2.x86_64.rpm                                                                         | 7.9 MB  00:00:00     
+---------------------------------------------------------------------------------------------------------------------------------------------------
+Total                                                                                                               48 MB/s |  13 MB  00:00:00     
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Updating   : rpm-4.11.3-48.amzn2.0.3.x86_64                                                                                                 1/28 
+  Updating   : rpm-libs-4.11.3-48.amzn2.0.3.x86_64                                                                                            2/28 
+  Updating   : rpm-build-libs-4.11.3-48.amzn2.0.3.x86_64                                                                                      3/28 
+  Updating   : 2:vim-data-9.0.1403-1.amzn2.0.2.noarch                                                                                         4/28 
+  Updating   : 2:vim-filesystem-9.0.1403-1.amzn2.0.2.noarch                                                                                   5/28 
+  Updating   : 2:vim-common-9.0.1403-1.amzn2.0.2.x86_64                                                                                       6/28 
+  Updating   : 2:vim-enhanced-9.0.1403-1.amzn2.0.2.x86_64                                                                                     7/28 
+  Updating   : 2:vim-minimal-9.0.1403-1.amzn2.0.2.x86_64                                                                                      8/28 
+  Updating   : python2-rpm-4.11.3-48.amzn2.0.3.x86_64                                                                                         9/28 
+  Updating   : rpm-sign-4.11.3-48.amzn2.0.3.x86_64                                                                                           10/28 
+  Updating   : rpm-build-4.11.3-48.amzn2.0.3.x86_64                                                                                          11/28 
+  Updating   : rpm-plugin-systemd-inhibit-4.11.3-48.amzn2.0.3.x86_64                                                                         12/28 
+  Updating   : net-tools-2.0-0.22.20131004git.amzn2.0.3.x86_64                                                                               13/28 
+  Updating   : ca-certificates-2021.2.50-72.amzn2.0.7.noarch                                                                                 14/28 
+  Cleanup    : python2-rpm-4.11.3-48.amzn2.0.2.x86_64                                                                                        15/28 
+  Cleanup    : rpm-build-4.11.3-48.amzn2.0.2.x86_64                                                                                          16/28 
+  Cleanup    : rpm-sign-4.11.3-48.amzn2.0.2.x86_64                                                                                           17/28 
+  Cleanup    : rpm-build-libs-4.11.3-48.amzn2.0.2.x86_64                                                                                     18/28 
+  Cleanup    : 2:vim-minimal-9.0.1403-1.amzn2.0.1.x86_64                                                                                     19/28 
+  Cleanup    : 2:vim-enhanced-9.0.1403-1.amzn2.0.1.x86_64                                                                                    20/28 
+  Cleanup    : 2:vim-common-9.0.1403-1.amzn2.0.1.x86_64                                                                                      21/28 
+  Cleanup    : rpm-plugin-systemd-inhibit-4.11.3-48.amzn2.0.2.x86_64                                                                         22/28 
+  Cleanup    : 2:vim-data-9.0.1403-1.amzn2.0.1.noarch                                                                                        23/28 
+  Cleanup    : 2:vim-filesystem-9.0.1403-1.amzn2.0.1.noarch                                                                                  24/28 
+  Cleanup    : ca-certificates-2021.2.50-72.amzn2.0.5.noarch                                                                                 25/28 
+  Cleanup    : rpm-libs-4.11.3-48.amzn2.0.2.x86_64                                                                                           26/28 
+  Cleanup    : rpm-4.11.3-48.amzn2.0.2.x86_64                                                                                                27/28 
+  Cleanup    : net-tools-2.0-0.22.20131004git.amzn2.0.2.x86_64                                                                               28/28 
+  Verifying  : python2-rpm-4.11.3-48.amzn2.0.3.x86_64                                                                                         1/28 
+  Verifying  : rpm-plugin-systemd-inhibit-4.11.3-48.amzn2.0.3.x86_64                                                                          2/28 
+  Verifying  : ca-certificates-2021.2.50-72.amzn2.0.7.noarch                                                                                  3/28 
+  Verifying  : rpm-libs-4.11.3-48.amzn2.0.3.x86_64                                                                                            4/28 
+  Verifying  : rpm-sign-4.11.3-48.amzn2.0.3.x86_64                                                                                            5/28 
+  Verifying  : net-tools-2.0-0.22.20131004git.amzn2.0.3.x86_64                                                                                6/28 
+  Verifying  : rpm-build-libs-4.11.3-48.amzn2.0.3.x86_64                                                                                      7/28 
+  Verifying  : 2:vim-filesystem-9.0.1403-1.amzn2.0.2.noarch                                                                                   8/28 
+  Verifying  : 2:vim-common-9.0.1403-1.amzn2.0.2.x86_64                                                                                       9/28 
+  Verifying  : 2:vim-data-9.0.1403-1.amzn2.0.2.noarch                                                                                        10/28 
+  Verifying  : rpm-4.11.3-48.amzn2.0.3.x86_64                                                                                                11/28 
+  Verifying  : 2:vim-enhanced-9.0.1403-1.amzn2.0.2.x86_64                                                                                    12/28 
+  Verifying  : rpm-build-4.11.3-48.amzn2.0.3.x86_64                                                                                          13/28 
+  Verifying  : 2:vim-minimal-9.0.1403-1.amzn2.0.2.x86_64                                                                                     14/28 
+  Verifying  : 2:vim-filesystem-9.0.1403-1.amzn2.0.1.noarch                                                                                  15/28 
+  Verifying  : rpm-build-libs-4.11.3-48.amzn2.0.2.x86_64                                                                                     16/28 
+  Verifying  : 2:vim-common-9.0.1403-1.amzn2.0.1.x86_64                                                                                      17/28 
+  Verifying  : 2:vim-minimal-9.0.1403-1.amzn2.0.1.x86_64                                                                                     18/28 
+  Verifying  : rpm-4.11.3-48.amzn2.0.2.x86_64                                                                                                19/28 
+  Verifying  : 2:vim-data-9.0.1403-1.amzn2.0.1.noarch                                                                                        20/28 
+  Verifying  : 2:vim-enhanced-9.0.1403-1.amzn2.0.1.x86_64                                                                                    21/28 
+  Verifying  : ca-certificates-2021.2.50-72.amzn2.0.5.noarch                                                                                 22/28 
+  Verifying  : rpm-build-4.11.3-48.amzn2.0.2.x86_64                                                                                          23/28 
+  Verifying  : rpm-libs-4.11.3-48.amzn2.0.2.x86_64                                                                                           24/28 
+  Verifying  : python2-rpm-4.11.3-48.amzn2.0.2.x86_64                                                                                        25/28 
+  Verifying  : rpm-sign-4.11.3-48.amzn2.0.2.x86_64                                                                                           26/28 
+  Verifying  : rpm-plugin-systemd-inhibit-4.11.3-48.amzn2.0.2.x86_64                                                                         27/28 
+  Verifying  : net-tools-2.0-0.22.20131004git.amzn2.0.2.x86_64                                                                               28/28 
+
+Updated:
+  ca-certificates.noarch 0:2021.2.50-72.amzn2.0.7                      net-tools.x86_64 0:2.0-0.22.20131004git.amzn2.0.3                           
+  python2-rpm.x86_64 0:4.11.3-48.amzn2.0.3                             rpm.x86_64 0:4.11.3-48.amzn2.0.3                                            
+  rpm-build.x86_64 0:4.11.3-48.amzn2.0.3                               rpm-build-libs.x86_64 0:4.11.3-48.amzn2.0.3                                 
+  rpm-libs.x86_64 0:4.11.3-48.amzn2.0.3                                rpm-plugin-systemd-inhibit.x86_64 0:4.11.3-48.amzn2.0.3                     
+  rpm-sign.x86_64 0:4.11.3-48.amzn2.0.3                                vim-common.x86_64 2:9.0.1403-1.amzn2.0.2                                    
+  vim-data.noarch 2:9.0.1403-1.amzn2.0.2                               vim-enhanced.x86_64 2:9.0.1403-1.amzn2.0.2                                  
+  vim-filesystem.noarch 2:9.0.1403-1.amzn2.0.2                         vim-minimal.x86_64 2:9.0.1403-1.amzn2.0.2                                   
+
+Complete!
+Loaded plugins: extras_suggestions, langpacks, priorities, update-motd
+244 packages excluded due to repository priority protections
+Resolving Dependencies
+--> Running transaction check
+---> Package libunwind.x86_64 2:1.2-2.amzn2.0.2 will be installed
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+===================================================================================================================================================
+ Package                          Arch                          Version                                    Repository                         Size
+===================================================================================================================================================
+Installing:
+ libunwind                        x86_64                        2:1.2-2.amzn2.0.2                          amzn2-core                         55 k
+
+Transaction Summary
+===================================================================================================================================================
+Install  1 Package
+
+Total download size: 55 k
+Installed size: 146 k
+Downloading packages:
+libunwind-1.2-2.amzn2.0.2.x86_64.rpm                                                                                        |  55 kB  00:00:00     
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Installing : 2:libunwind-1.2-2.amzn2.0.2.x86_64                                                                                              1/1 
+  Verifying  : 2:libunwind-1.2-2.amzn2.0.2.x86_64                                                                                              1/1 
+
+Installed:
+  libunwind.x86_64 2:1.2-2.amzn2.0.2                                                                                                               
+
+Complete!
+--2023-05-07 18:59:39--  https://dot.net/v1/dotnet-install.sh
+Resolving dot.net (dot.net)... 20.103.85.33, 20.84.181.62, 20.81.111.85, ...
+Connecting to dot.net (dot.net)|20.103.85.33|:443... connected.
+HTTP request sent, awaiting response... 301 Moved Permanently
+Location: https://dotnet.microsoft.com/download/dotnet/scripts/v1/dotnet-install.sh [following]
+--2023-05-07 18:59:39--  https://dotnet.microsoft.com/download/dotnet/scripts/v1/dotnet-install.sh
+Resolving dotnet.microsoft.com (dotnet.microsoft.com)... 13.107.238.64, 13.107.237.64, 2620:1ec:4e:1::64, ...
+Connecting to dotnet.microsoft.com (dotnet.microsoft.com)|13.107.238.64|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Cookie coming from dotnet.microsoft.com attempted to set domain to dotnet.microsoft.com
+Cookie coming from dotnet.microsoft.com attempted to set domain to dotnet.microsoft.com
+Length: 58824 (57K) [application/x-sh]
+Saving to: ‘dotnet-install.sh’
+
+100%[=========================================================================================================>] 58,824       201KB/s   in 0.3s   
+
+2023-05-07 18:59:40 (201 KB/s) - ‘dotnet-install.sh’ saved [58824/58824]
+
+dotnet-install: Attempting to download using primary link https://dotnetcli.azureedge.net/dotnet/Sdk/3.1.426/dotnet-sdk-3.1.426-linux-x64.tar.gz
+dotnet-install: Extracting zip from https://dotnetcli.azureedge.net/dotnet/Sdk/3.1.426/dotnet-sdk-3.1.426-linux-x64.tar.gz
+dotnet-install: Installed version is 3.1.426
+dotnet-install: Adding to current process PATH: `/home/ec2-user/.dotnet`. Note: This change will be visible only when sourcing script.
+dotnet-install: Note that the script does not resolve dependencies during installation.
+dotnet-install: To check the list of dependencies, go to https://learn.microsoft.com/dotnet/core/install, select your operating system and check the "Dependencies" section.
+dotnet-install: Installation finished successfully.
+
+apiBucket=$(aws s3api list-buckets --output text --query 'Buckets[?contains(Name, `pollynotesapi`) == `true`].Name')
+
+sam build
+        SAM CLI now collects telemetry to better understand customer needs.
+
+        You can OPT OUT and disable telemetry collection by setting the
+        environment variable SAM_CLI_TELEMETRY=0 in your shell.
+        Thanks for your help!
+
+        Learn More: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-telemetry.html
+
+Building codeuri: /home/ec2-user/environment/api/list-function runtime: dotnetcore3.1 metadata: {} architecture: x86_64 functions: listFunction
+
+Build Failed
+Error: DotnetCliPackageBuilder:Resolver - No dotnet cli executable found!
+
+Observação:
+A publicação falhou pois o dotnet do projeto está defasado da AWS
+
+sam deploy --stack-name polly-notes-api --s3-bucket $apiBucket --parameter-overrides apiBucket=$apiBucket
+
+------------------------------------------------------------------------------------
+Teste o Site
+------------------------------------------------------------------------------------
+PollyNotes WebSite: http://labstack-ce6a3b14-ab3a-4c32-8966-28-pollynotesweb-1qh82tq4s2in3.s3-website.eu-west-2.amazonaws.com
+Abra em uma nova Aba > Insira os dados necessarios > Login
+
+Insira uma nova Nota
+Edite uma nota
+Pesquise uma nota
+Ouça uma nota
+Exclua uma nota
