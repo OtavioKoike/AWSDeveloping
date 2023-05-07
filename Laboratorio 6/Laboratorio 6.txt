@@ -1,0 +1,335 @@
+Laboratório 6 (.NET)
+
+labs
+https://us-east-1.student.classrooms.aws.training/class/rUUw3PQK5VHrJwGAHDQqbs
+
+observação
+Usar o PowerShell
+
+------------------------------------------------------------------------------------
+
+1. Configure o Amazon Cognito
+
+------------------------------------------------------------------------------------
+Crie um Grupo de Usuarios do Amazon Cognito
+------------------------------------------------------------------------------------
+Console AWS > Cognito > Criar um grupo de usuarios > Avançar
+Provedors: Grupo de Usuarios do Cognito
+Opções de Login: Nome de Usuario
+
+Politicas de Senha > Avançar
+Modo de politica: Personalizado
+Comprimento: 6
+Multifator: Sem MFA
+
+Cadastro de Autoatendimento > Avançar
+Auto Registro: Check
+Envio de Mensagens: No Check
+
+Email > Avançar
+Provedor: Enviar Emails com Cognito
+
+Integrar Aplicação > Avançar
+Nome do pool de usuarios: PollyNotesPool
+Tipo de Aplicativo: Cliente Publico
+Nome do Cliente de aplicação: PollyNotesWeb
+
+Revise e Crie > Criar
+
+PollyNotesPool
+Id do grupo de usuarios: us-east-1_ORuTl9BcW
+Arn do grupo de usuarios: arn:aws:cognito-idp:us-east-1:070813755899:userpool/us-east-1_ORuTl9BcW
+
+Integração da Aplicação > Lista de clientes da Aplicação
+Id do Cliente: 5g5bphgjbfbr828kpig9ku8mkj
+
+------------------------------------------------------------------------------------
+Adicione um Novo Usuario ao Grupo
+------------------------------------------------------------------------------------
+Console AWS > Cloud9 > Abrir IDE do Lab 6
+
+No terminal do Cloud9:
+
+apiURL='https://7wyepaym8c.execute-api.us-east-1.amazonaws.com/Prod'
+CognitoPoolId='us-east-1_ORuTl9BcW'
+AppClientId='5g5bphgjbfbr828kpig9ku8mkj'
+
+aws cognito-idp sign-up --client-id $AppClientId --username student --password student
+{
+    "UserConfirmed": false,
+    "UserSub": "a27fb775-3ebb-4a86-ac7c-d9a0767ad9da"
+}
+
+aws cognito-idp admin-confirm-sign-up --user-pool-id $CognitoPoolId --username student
+
+Console AWS > Cognito > PollyNotesPool > Usuarios
+Você verá um novo usuario (refresh caso precise)
+
+------------------------------------------------------------------------------------
+Teste a Autenticação
+------------------------------------------------------------------------------------
+testLoginWebSite: http://labstack-ce6a3b14-ab3a-4c32-8966-testloginbucket-128kysjcl1cle.s3-website-us-east-1.amazonaws.com
+Abra em uma nova Aba > Insira os dados necessarios > Login
+
+Response:
+Authorization Token
+eyJraWQiOiI5WTdvdURJeE5NRlNsNlpCeUtuRW01XC9NeWtMa3ZrMFwvOVl4Yk5cLzk5MXB3PSIsImFsZyI6IlJTMjU2In0.eyJvcmlnaW5fanRpIjoiYWMxODRlZmQtYTdmYi00ZWMzLWJmMzAtODYzNTE5MGYxMWRhIiwic3ViIjoiYTI3ZmI3NzUtM2ViYi00YTg2LWFjN2MtZDlhMDc2N2FkOWRhIiwiYXVkIjoiNWc1YnBoZ2piZmJyODI4a3BpZzlrdThta2oiLCJldmVudF9pZCI6Ijk5NWUxYmNkLTViOWItNGVjYi1iNjdmLWRiYmEzOWIwMTI5MCIsInRva2VuX3VzZSI6ImlkIiwiYXV0aF90aW1lIjoxNjgzNDgxMTczLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtZWFzdC0xLmFtYXpvbmF3cy5jb21cL3VzLWVhc3QtMV9PUnVUbDlCY1ciLCJjb2duaXRvOnVzZXJuYW1lIjoic3R1ZGVudCIsImV4cCI6MTY4MzQ4NDc3MywiaWF0IjoxNjgzNDgxMTczLCJqdGkiOiIzOGUzOWI0ZC1kOGFjLTQxNzYtYjA1Yi0wZmE5ODcwM2U3MTAifQ.WG-xKJ3FNRZ5ysLGT0_56ED8NSLUoYl4uJ_Eep9gM9x2Sqo32Pa7dLWxhY7x9UZaKRMyTy-q9xQW7CVTh_fDmXayUQyypKah57LvY90mdB1GTg3vGdHqzVKCDP4rr6ziq2Y-4qUisaAa7ZbMqhMZMmMhIiWQMynWNiARv6lfzlv0gaAQgpxUAhT-F86jbhykzUIhw_zUKMH2rqIFR6aWsGRA_GzKhSpa2eYnYPcFPE34X0Eomi_c1mjNfg3AIQjn164f4pi_GtwqqfA1NIsHayJcbh6pCDdyRQx6ra2kYs59y4dLT_ZtYQDVNhEaYIVw5NnwTNiRzWAx2zMElDpP_g
+
+------------------------------------------------------------------------------------
+
+2. Configure o Amazon API Gateway para usar o Amazon Cognito
+
+------------------------------------------------------------------------------------
+Criar um Autorizados do Amazon API Gateway para o PollyNotesAPI
+------------------------------------------------------------------------------------
+Console AWS > API Gateway> PollyNotesAPI
+
+Autorizadores > Cruar novo Autorizador > Criar
+Nome: PollyNotesPool
+Tipo: Cognito
+Grupo de Usuarios do Cognito: PollyNotesPool
+Fonte do Token: Authorization
+
+Test
+Preencha com o Token gerado no passo anterior.
+Response:
+{
+"aud": "5g5bphgjbfbr828kpig9ku8mkj",
+"auth_time": "1683481173",
+"cognito:username": "student",
+"event_id": "995e1bcd-5b9b-4ecb-b67f-dbba39b01290",
+"exp": "Sun May 07 18:39:33 UTC 2023",
+"iat": "Sun May 07 17:39:33 UTC 2023",
+"iss": "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_ORuTl9BcW",
+"jti": "38e39b4d-d8ac-4176-b05b-0fa98703e710",
+"origin_jti": "ac184efd-a7fb-4ec3-bf30-8635190f11da",
+"sub": "a27fb775-3ebb-4a86-ac7c-d9a0767ad9da",
+"token_use": "id"
+}
+
+------------------------------------------------------------------------------------
+Configure os Métodos existentes para usar o Autorizador
+------------------------------------------------------------------------------------
+Console AWS > API Gateway> PollyNotesAPI
+
+Resources > /notes > GET > Method Request
+Edit Authorization > PollyNotesPool (Refresh caso precise) > Check
+
+Resources > /notes > GET > Integration Request
+Mapping Templates > application/json > Salvar
+Substitua:
+DE: {"UserId": "student"}
+PARA:
+{
+    "UserId": "$context.authorizer.claims['cognito:username']"
+}
+
+Resources > /notes > POST > Method Request
+Edit Authorization > PollyNotesPool (Refresh caso precise) > Check
+
+Resources > /notes > POST > Integration Request
+Mapping Templates > application/json > Salvar
+Substitua:
+DE:
+{
+    "UserId": "student",
+    "NoteId": $input.json('$.NoteId'),
+    "Note": $input.json('$.Note')
+}
+PARA:
+{
+    "UserId": "$context.authorizer.claims['cognito:username']",
+    "NoteId": $input.json('$.NoteId'),
+    "Note": $input.json('$.Note')
+}
+
+------------------------------------------------------------------------------------
+
+3. Crie os Recursos de API restantes usando um Arquivo Swagger
+
+------------------------------------------------------------------------------------
+Personalize o Arquivo Swagger
+------------------------------------------------------------------------------------
+No terminal do Cloud9:
+
+region=$(curl http://169.254.169.254/latest/meta-data/placement/region -s)
+acct=$(aws sts get-caller-identity --output text --query "Account")
+poolId=$(aws cognito-idp list-user-pools --max-results 1 --output text --query "UserPools[].Id")
+poolArn="arn:aws:cognito-idp:$region:$acct:userpool/$poolId"
+
+sed -i "s~\[Cognito_Pool_ARN\]~$poolArn~g" ~/environment/api/PollyNotesAPI-swagger.yaml
+sed -i "s~\[AWS_Region\]~$region~g" ~/environment/api/PollyNotesAPI-swagger.yaml
+sed -i "s~\[AWS_AccountId\]~$acct~g" ~/environment/api/PollyNotesAPI-swagger.yaml
+
+------------------------------------------------------------------------------------
+Mescle o Arquivo Swagger com a API Existente
+------------------------------------------------------------------------------------
+cd ~/environment/api
+
+apiId=$(aws apigateway get-rest-apis --query "items[?name == 'PollyNotesAPI'].id" --output text)
+
+aws apigateway put-rest-api --rest-api-id $apiId --mode merge --body 'fileb://PollyNotesAPI-swagger.yaml'
+{
+    "id": "7wyepaym8c",
+    "name": "PollyNotesAPI",
+    "createdDate": "2023-05-07T17:04:56+00:00",
+    "apiKeySource": "HEADER",
+    "endpointConfiguration": {
+        "types": [
+            "REGIONAL"
+        ]
+    },
+    "tags": {
+        "aws:cloudformation:logical-id": "pollyNotesAPI",
+        "aws:cloudformation:stack-id": "arn:aws:cloudformation:us-east-1:070813755899:stack/LabStack-ce6a3b14-ab3a-4c32-8966-2800ce93ba09-8HSCCMHL1HyrVL4aytLv1D-2/45f6fde0-ecf9-11ed-b060-0e117ae1a657",
+        "aws:cloudformation:stack-name": "LabStack-ce6a3b14-ab3a-4c32-8966-2800ce93ba09-8HSCCMHL1HyrVL4aytLv1D-2"
+    },
+    "disableExecuteApiEndpoint": false
+}
+
+aws apigateway create-deployment --rest-api-id $apiId --stage-name Prod
+{
+    "id": "0gefqd",
+    "createdDate": "2023-05-07T18:03:55+00:00"
+}
+
+aws lambda add-permission --function-name delete-function --statement-id apiInvoke --action lambda:InvokeFunction --principal apigateway.amazonaws.com
+{
+    "Statement": "{\"Sid\":\"apiInvoke\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"apigateway.amazonaws.com\"},\"Action\":\"lambda:InvokeFunction\",\"Resource\":\"arn:aws:lambda:us-east-1:070813755899:function:delete-function\"}"
+}
+
+aws lambda add-permission --function-name dictate-function --statement-id apiInvoke --action lambda:InvokeFunction --principal apigateway.amazonaws.com
+{
+    "Statement": "{\"Sid\":\"apiInvoke\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"apigateway.amazonaws.com\"},\"Action\":\"lambda:InvokeFunction\",\"Resource\":\"arn:aws:lambda:us-east-1:070813755899:function:dictate-function\"}"
+}
+
+aws lambda add-permission --function-name search-function --statement-id apiInvoke --action lambda:InvokeFunction --principal apigateway.amazonaws.com
+{
+    "Statement": "{\"Sid\":\"apiInvoke\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"apigateway.amazonaws.com\"},\"Action\":\"lambda:InvokeFunction\",\"Resource\":\"arn:aws:lambda:us-east-1:070813755899:function:search-function\"}"
+}
+
+------------------------------------------------------------------------------------
+
+4. Configure o Aplicativo Web Front-end
+
+------------------------------------------------------------------------------------
+Configure o Aplicativo Web
+------------------------------------------------------------------------------------
+sed -i "s~\[UserPoolId\]~$CognitoPoolId~g" ~/environment/web/src/Config.js
+sed -i "s~\[AppClientId\]~$AppClientId~g" ~/environment/web/src/Config.js
+sed -i "s~\[ApiURL\]~$apiURL~g" ~/environment/web/src/Config.js
+
+Verifique no arquivo web/src/Config.js
+
+cd ~/environment/web
+
+npm install
+added 1993 packages, and audited 1994 packages in 58s
+
+138 packages are looking for funding
+  run `npm fund` for details
+
+56 vulnerabilities (1 low, 8 moderate, 32 high, 15 critical)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+
+npm run test+build
+> react-web@0.1.0 test+build
+> CI=true npm test && npm run build
+
+
+> react-web@0.1.0 test
+> react-scripts test
+
+PASS src/App.test.js
+  ✓ renders App component (101 ms)
+
+  console.log
+    undefined
+
+      at src/Routes/Notes.js:33:21
+
+  console.log
+    redirecting to login
+
+      at src/Routes/Notes.js:34:21
+
+Test Suites: 1 passed, 1 total
+Tests:       1 passed, 1 total
+Snapshots:   0 total
+Time:        3.27 s
+Ran all test suites.
+
+> react-web@0.1.0 build
+> react-scripts build
+
+Creating an optimized production build...
+Browserslist: caniuse-lite is outdated. Please run:
+npx browserslist@latest --update-db
+
+Why you should do it regularly:
+https://github.com/browserslist/browserslist#browsers-data-updating
+Compiled successfully.
+
+File sizes after gzip:
+
+  88.59 KB  build/static/js/2.16e7aa1e.chunk.js
+  23.25 KB  build/static/css/2.4c97ca4f.chunk.css
+  4.65 KB   build/static/js/main.1063720b.chunk.js
+  775 B     build/static/js/runtime-main.7e0376b9.js
+  277 B     build/static/css/main.c56fd950.chunk.css
+
+The project was built assuming it is hosted at /.
+You can control this with the homepage field in your package.json.
+
+The build folder is ready to be deployed.
+You may serve it with a static server:
+
+  npm install -g serve
+  serve -s build
+
+Find out more about deployment here:
+
+  https://cra.link/deployment
+
+webBucket=$(aws s3api list-buckets --output text --query 'Buckets[?contains(Name, `pollynotesweb`) == `true`].Name')
+
+aws s3 sync --delete build/. s3://$webBucket
+upload: build/favicon.ico to s3://labstack-ce6a3b14-ab3a-4c32-8966-28-pollynotesweb-1ua0iqksv48ap/favicon.ico
+upload: build/asset-manifest.json to s3://labstack-ce6a3b14-ab3a-4c32-8966-28-pollynotesweb-1ua0iqksv48ap/asset-manifest.json
+upload: build/index.html to s3://labstack-ce6a3b14-ab3a-4c32-8966-28-pollynotesweb-1ua0iqksv48ap/index.html
+upload: build/static/js/main.1063720b.chunk.js to s3://labstack-ce6a3b14-ab3a-4c32-8966-28-pollynotesweb-1ua0iqksv48ap/static/js/main.1063720b.chunk.js
+upload: build/robots.txt to s3://labstack-ce6a3b14-ab3a-4c32-8966-28-pollynotesweb-1ua0iqksv48ap/robots.txt
+upload: build/static/css/main.c56fd950.chunk.css.map to s3://labstack-ce6a3b14-ab3a-4c32-8966-28-pollynotesweb-1ua0iqksv48ap/static/css/main.c56fd950.chunk.css.map
+upload: build/static/css/main.c56fd950.chunk.css to s3://labstack-ce6a3b14-ab3a-4c32-8966-28-pollynotesweb-1ua0iqksv48ap/static/css/main.c56fd950.chunk.css
+upload: build/static/js/2.16e7aa1e.chunk.js.LICENSE.txt to s3://labstack-ce6a3b14-ab3a-4c32-8966-28-pollynotesweb-1ua0iqksv48ap/static/js/2.16e7aa1e.chunk.js.LICENSE.txt
+upload: build/static/js/main.1063720b.chunk.js.map to s3://labstack-ce6a3b14-ab3a-4c32-8966-28-pollynotesweb-1ua0iqksv48ap/static/js/main.1063720b.chunk.js.map
+upload: build/manifest.json to s3://labstack-ce6a3b14-ab3a-4c32-8966-28-pollynotesweb-1ua0iqksv48ap/manifest.json
+upload: build/static/js/runtime-main.7e0376b9.js to s3://labstack-ce6a3b14-ab3a-4c32-8966-28-pollynotesweb-1ua0iqksv48ap/static/js/runtime-main.7e0376b9.js
+upload: build/static/js/runtime-main.7e0376b9.js.map to s3://labstack-ce6a3b14-ab3a-4c32-8966-28-pollynotesweb-1ua0iqksv48ap/static/js/runtime-main.7e0376b9.js.map
+upload: build/static/js/2.16e7aa1e.chunk.js to s3://labstack-ce6a3b14-ab3a-4c32-8966-28-pollynotesweb-1ua0iqksv48ap/static/js/2.16e7aa1e.chunk.js
+upload: build/static/css/2.4c97ca4f.chunk.css.map to s3://labstack-ce6a3b14-ab3a-4c32-8966-28-pollynotesweb-1ua0iqksv48ap/static/css/2.4c97ca4f.chunk.css.map
+upload: build/static/css/2.4c97ca4f.chunk.css to s3://labstack-ce6a3b14-ab3a-4c32-8966-28-pollynotesweb-1ua0iqksv48ap/static/css/2.4c97ca4f.chunk.css
+upload: build/static/js/2.16e7aa1e.chunk.js.map to s3://labstack-ce6a3b14-ab3a-4c32-8966-28-pollynotesweb-1ua0iqksv48ap/static/js/2.16e7aa1e.chunk.js.map
+
+------------------------------------------------------------------------------------
+
+5. Teste a Funcionalidade do Aplicativo Web
+
+------------------------------------------------------------------------------------
+Teste o Aplicativo Web
+------------------------------------------------------------------------------------
+PollyNotes WebSite: http://labstack-ce6a3b14-ab3a-4c32-8966-28-pollynotesweb-1ua0iqksv48ap.s3-website-us-east-1.amazonaws.com
+Abra em uma nova Aba > Insira os dados necessarios > Login
+
+Insira uma nova Nota
+Edite uma nota
+Pesquise uma nota
+Ouça uma nota
+Exclua uma nota
